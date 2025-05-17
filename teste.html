@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>EduSens & BioMap - Documento Interativo Expandido</title>
+  <style>
+    /* Reset e base */
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0; padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e7f0fc;
+      color: #1a2e4a;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Container principal */
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto 3rem;
+      padding: 0 1rem;
+    }
+
+    /* Cabeçalho */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #1565c0;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+    header p {
+      font-weight: 500;
+      font-size: 1.2rem;
+      color: #2c3e50cc;
+    }
+
+    /* Grid para conteúdo e painel lateral */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 3fr 1.5fr;
+      gap: 2.5rem;
+    }
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Conteúdo principal */
+    main {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem 3rem;
+      box-shadow: 0 12px 30px rgba(21, 101, 192, 0.15);
+      overflow-y: auto;
+      max-height: 75vh;
+    }
+    main section {
+      margin-bottom: 3rem;
+    }
+    main h2 {
+      color: #0d47a1;
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      letter-spacing: 0.03em;
+      user-select: text;
+    }
+    main h3 {
+      color: #1565c0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      user-select: text;
+      border-left: 5px solid #42a5f5;
+      padding-left: 0.8rem;
+    }
+    main p, main ul {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #2c3e50dd;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    main ul {
+      padding-left: 2rem;
+      list-style-type: disc;
+    }
+    main ul li {
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+    }
+    /* Termos com tooltip */
+    .tooltip {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dotted #1565c0;
+    }
+    .tooltip:hover::after,
+    .tooltip:focus-visible::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      bottom: 125%;
+      transform: translateX(-50%);
+      background: #1565c0;
+      color: white;
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      font-weight: 600;
+      opacity: 0.95;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .tooltip:focus-visible {
+      outline: 2px solid #42a5f5;
+      outline-offset: 3px;
+    }
+
+    /* Painel lateral */
+    aside {
+      background: #f0f7ff;
+      border-radius: 20px;
+      padding: 2rem 2rem 2rem 2rem;
+      box-shadow: 0 12px 30px rgba(21, 101, 192, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-height: 75vh;
+      overflow-y: auto;
+      user-select: none;
+    }
+    aside h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1565c0;
+      margin: 0 0 1rem 0;
+      user-select: text;
+    }
+    .idea-card {
+      background: white;
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 8px 24px rgba(21, 101, 192, 0.12);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-size: 1rem;
+      color: #0d47a1;
+      font-weight: 600;
+      line-height: 1.4;
+      position: relative;
+    }
+    .idea-card:hover,
+    .idea-card:focus-visible {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 48px rgba(21, 101, 192, 0.25);
+      outline: none;
+      background: #d9e8ff;
+      color: #0a3570;
+      font-weight: 700;
+      z-index: 10;
+    }
+    .idea-card h4 {
+      margin: 0 0 0.6rem 0;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+    .idea-card p {
+      margin: 0;
+      font-weight: 500;
+      color: #284b6f;
+    }
+
+    /* Rodapé */
+    footer {
+      background:#1565c0;
+      color:#fff;
+      text-align:center;
+      padding:1.7rem 1rem 1.1rem 1rem;
+      font-size:1.05rem;
+      font-weight:500;
+      letter-spacing:0.02em;
+      border-radius:0 0 16px 16px;
+      line-height:1.6;
+      user-select:none;
+      max-width: 1100px;
+      margin: 3rem auto 1rem;
+    }
+
+    /* Navegação lateral */
+    nav {
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      user-select: none;
+    }
+    nav button {
+      background: #1565c0;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 1rem;
+      outline-offset: 3px;
+    }
+    nav button.active,
+    nav button:hover,
+    nav button:focus-visible {
+      background: #42a5f5;
+      color: #0d47a1;
+      font-weight: 700;
+      box-shadow: 0 0 10px #42a5f5aa;
+      outline: none;
+    }
+    @media (max-width: 600px) {
+      nav {
+        justify-content: center;
+      }
+      nav button {
+        flex: 1 1 100%;
+        max-width: 300px;
+      }
+    }
+
+    /* Scrollbar estilizada */
+    main::-webkit-scrollbar,
+    aside::-webkit-scrollbar {
+      width: 8px;
+    }
+    main::-webkit-scrollbar-track,
+    aside::-webkit-scrollbar-track {
+      background: #d0e1ff;
+      border-radius: 8px;
+    }
+    main::-webkit-scrollbar-thumb,
+    aside::-webkit-scrollbar-thumb {
+      background: #1565c0;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" role="main" aria-label="Documento interativo EduSens & BioMap expandido">
+    <header>
+      <h1>Projetos Educacionais e Tecnológicos</h1>
+      <p>Exploração detalhada e interativa das iniciativas para educação ambiental e monitoramento climático</p>
+    </header>
+
+    <nav aria-label="Navegação das seções">
+      <button class="active" aria-current="page" data-target="diario">Diário Digital do Clima</button>
+      <button data-target="entrevistas">Entrevistas e Podcast</button>
+      <button data-target="mapa">Mapa Colaborativo</button>
+      <button data-target="rede-social">Rede Social Verde</button>
+      <button data-target="clima-verdade">Clima de Verdade</button>
+      <button data-target="biomap">BioMap Saúde</button>
+      <button data-target="monitoramento-urbano">Monitoramento Urbano</button>
+    </nav>
+
+    <div class="main-grid">
+      <main tabindex="0">
+        <section id="diario" aria-labelledby="diario-title" class="active-section">
+          <h2 id="diario-title">Diário Digital do Clima</h2>
+          <p><strong>Objetivo:</strong> Desenvolver a percepção ambiental dos estudantes a partir do monitoramento diário do clima local, relacionando os dados a conteúdos de ciências e geografia.</p>
+          <h3>Ferramentas</h3>
+          <ul>
+            <li>Google Forms (para coleta de dados)</li>
+            <li>Google Sheets ou Excel (para análise e criação de gráficos)</li>
+            <li>Celulares ou anotações manuais (caso não haja acesso contínuo à internet)</li>
+          </ul>
+          <h3>Etapas do projeto</h3>
+          <ol>
+            <li>Introdução ao tema: aula explicando a diferença entre tempo e clima, e os efeitos das mudanças climáticas.</li>
+            <li>Criação de um formulário com campos como: temperatura (percebida ou medida), sensação térmica, ocorrência de chuva, vento, umidade aproximada, observações visuais.</li>
+            <li>Registro diário feito pelos alunos durante um período (ex: 30 dias).</li>
+            <li>Organização dos dados em planilhas e produção de gráficos.</li>
+            <li>Análise em grupo dos dados obtidos e discussão sobre padrões percebidos (como aumento de calor, frequência de chuvas, etc.).</li>
+          </ol>
+          <h3>Produto final e avaliação</h3>
+          <p>Relatório ou apresentação com gráficos e interpretações sobre os padrões climáticos locais observados.</p>
+          <ul>
+            <li>Participação na coleta e análise de dados</li>
+            <li>Clareza na comunicação dos resultados</li>
+            <li>Capacidade de interpretar e relacionar dados com o conteúdo estudado</li>
+          </ul>
+        </section>
+
+        <section id="entrevistas" aria-labelledby="entrevistas-title" hidden>
+          <h2 id="entrevistas-title">Entrevistas com Moradores + Podcast ou Vídeo</h2>
+          <p><strong>Objetivo:</strong> Investigar as percepções da comunidade sobre mudanças no clima ao longo dos anos e desenvolver a comunicação científica por meio de mídias digitais.</p>
+          <h3>Ferramentas</h3>
+          <ul>
+            <li>Celulares para gravação de áudio e vídeo</li>
+            <li>Aplicativos como Anchor, CapCut, Audacity, ou PowerPoint com áudio</li>
+            <li>Papel e caneta para roteiros e organização</li>
+          </ul>
+          <h3>Etapas do projeto</h3>
+          <ol>
+            <li>Estudo em sala sobre mudanças climáticas e seus impactos locais.</li>
+            <li>Elaboração dos roteiros com perguntas como: “O clima mudou nos últimos anos?”, “Há mais enchentes ou calor extremo no bairro?”, “Quais mudanças você notou?”.</li>
+            <li>Entrevistas com moradores da região, familiares ou comerciantes.</li>
+            <li>Edição dos áudios ou vídeos para criar um podcast ou vídeo curto.</li>
+            <li>Exibição do material na escola ou compartilhamento por meio de QR codes, redes sociais ou site da escola.</li>
+          </ol>
+          <h3>Produto final e avaliação</h3>
+          <p>Podcast ou vídeo com entrevistas e análises sobre as mudanças climáticas percebidas no bairro.</p>
+          <ul>
+            <li>Qualidade e organização do conteúdo</li>
+            <li>Clareza e respeito nas entrevistas</li>
+            <li>Conexão com os conteúdos científicos estudados</li>
+            <li>Criatividade na produção e divulgação</li>
+          </ul>
+        </section>
+
+        <section id="mapa" aria-labelledby="mapa-title" hidden>
+          <h2 id="mapa-title">Mapa Colaborativo dos Problemas Ambientais do Bairro</h2>
+          <p><strong>Objetivo:</strong> Mapear visualmente os impactos ambientais percebidos no bairro e discutir sua relação com o clima e a urbanização.</p>
+          <h3>Ferramentas</h3>
+          <ul>
+            <li>Google My Maps ou Google Maps com marcadores</li>
+            <li>Alternativa física: cartolina, mapas impressos, canetas coloridas e post-its</li>
+            <li>Celulares para tirar fotos e fazer anotações em campo</li>
+          </ul>
+          <h3>Etapas do projeto</h3>
+          <ol>
+            <li>Levantamento de problemas ambientais locais: enchentes, lixo acumulado, áreas desmatadas, calor extremo, etc.</li>
+            <li>Saída para observação do entorno da escola ou registro feito nos trajetos dos alunos.</li>
+            <li>Marcação dos pontos no mapa com descrições, fotos e sugestões de melhoria.</li>
+            <li>Discussão dos dados e relação com os efeitos das mudanças climáticas.</li>
+            <li>Apresentação dos mapas e debate sobre possíveis soluções locais.</li>
+          </ol>
+          <h3>Produto final e avaliação</h3>
+          <p>Mapa interativo (digital ou físico) com marcações, descrições e propostas para reduzir os impactos ambientais locais.</p>
+          <ul>
+            <li>Precisão na coleta e localização das informações</li>
+            <li>Clareza nas descrições dos problemas e propostas</li>
+            <li>Participação ativa dos estudantes</li>
+            <li>Capacidade de análise crítica</li>
+          </ul>
+        </section>
+
+        <section id="rede-social" aria-labelledby="rede-social-title" hidden>
+          <h2 id="rede-social-title">Rede Social Verde da Escola</h2>
+          <p><strong>Objetivo:</strong> Estimular o engajamento dos estudantes com os temas ambientais, por meio da criação de uma rede escolar para compartilhamento de ideias e ações sustentáveis.</p>
+          <h3>Ferramentas</h3>
+          <ul>
+            <li>Perfil no Instagram ou grupo temático no WhatsApp ou Telegram</li>
+            <li>Caso não seja possível digitalmente, uso de mural físico com postagens impressas</li>
+            <li>Câmera de celular, aplicativos simples de edição de imagem e texto</li>
+          </ul>
+          <h3>Etapas do projeto</h3>
+          <ol>
+            <li>Criação e organização do canal de comunicação (perfil ou grupo).</li>
+            <li>Definição de regras e papéis (quem posta, quem modera, o que pode ser publicado).</li>
+            <li>Postagens frequentes feitas pelos alunos:
+              <ul>
+                <li>Ações sustentáveis realizadas (reaproveitamento, reciclagem, economia de água)</li>
+                <li>Problemas ambientais no entorno</li>
+                <li>Curiosidades e dicas ambientais</li>
+                <li>Campanhas, memes e desafios sustentáveis</li>
+              </ul>
+            </li>
+            <li>Interação com a comunidade escolar (pais, professores, outros alunos).</li>
+            <li>Avaliação de engajamento e propostas de campanhas maiores (semana do meio ambiente, dia do clima, etc.).</li>
+          </ol>
+          <h3>Produto final e avaliação</h3>
+          <p>Canal ativo com postagens produzidas pelos alunos, promovendo a educação ambiental de forma constante e criativa.</p>
+          <ul>
+            <li>Participação nas postagens e nas campanhas</li>
+            <li>Qualidade, criatividade e relevância do conteúdo publicado</li>
+            <li>Responsabilidade no uso da rede</li>
+            <li>Envolvimento com os temas e mobilização da comunidade</li>
+          </ul>
+        </section>
+
+        <section id="clima-verdade" aria-labelledby="clima-verdade-title" hidden>
+          <h2 id="clima-verdade-title">Clima de Verdade - Kit Educacional Interativo</h2>
+          <p><strong>Objetivo:</strong> Permitir que os alunos vejam o clima local em tempo real, relacionando dados coletados com aprendizado prático e divertido.</p>
+          <h3>Como funciona?</h3>
+          <ul>
+            <li>Mini sensores fáceis de usar medem temperatura, umidade e qualidade do ar.</li>
+            <li>App simples mostra dados em tempo real, transformando-os em desafios e jogos.</li>
+            <li>Professores usam os dados em aulas de matemática, geografia, redação e ciências.</li>
+          </ul>
+          <h3>Benefícios</h3>
+          <ul>
+            <li>Aprendizado prático e contextualizado</li>
+            <li>Maior interesse e engajamento dos alunos</li>
+            <li>Estimula projetos e comunicação com a comunidade</li>
+          </ul>
+        </section>
+
+        <section id="biomap" aria-labelledby="biomap-title" hidden>
+          <h2 id="biomap-title">BioMap Saúde - Plataforma de Vigilância Ambiental e Risco à Saúde</h2>
+          <p><strong>Conceito:</strong> Plataforma digital que integra sensores ambientais e dados de saúde para identificar riscos e propor ações baseadas em evidências locais.</p>
+          <h3>Como funciona</h3>
+          <ul>
+            <li>Integração com sensores urbanos e sistema municipal de saúde e educação.</li>
+            <li>App comunitário para monitoramento pessoal e alertas personalizados.</li>
+            <li>Plataforma educacional para projetos interdisciplinares e relatórios automáticos.</li>
+            <li>Painel para profissionais de saúde com mapas de risco e histórico ambiental.</li>
+          </ul>
+          <h3>Exemplo real</h3>
+          <p>Na escola municipal João Verde, alunos usaram o BioMap para detectar poluição elevada e propor intervenções, que foram apoiadas pela UBS local para campanhas preventivas.</p>
+          <h3>Benefícios</h3>
+          <ul>
+            <li>Conscientização ativa sobre saúde e meio ambiente</li>
+            <li>Decisões baseadas em dados locais</li>
+            <li>Integração entre educação, saúde pública e urbanismo</li>
+            <li>Desenvolvimento de habilidades em dados e cidadania</li>
+          </ul>
+        </section>
+
+        <section id="monitoramento-urbano" aria-labelledby="monitoramento-urbano-title" hidden>
+          <h2 id="monitoramento-urbano-title">Cenário de Uso: Monitoramento Urbano em Campo</h2>
+          <ol>
+            <li><strong>Preparação em Sala de Aula:</strong> Apresentação do painel web EduSens e distribuição de tablets com mapas e roteiros.</li>
+            <li><strong>Saída de Campo Guiada:</strong> Grupos visitam estações fixas/móveis que transmitem dados em tempo real (qualidade do ar, temperatura, ruído, radiação UV).</li>
+            <li><strong>Coleta e Visualização:</strong> Acesso a leituras instantâneas, gráficos, mapas de calor e filtros no app.</li>
+            <li><strong>Interpretação:</strong> Análise de indicadores, elaboração de hipóteses e debates orientados por alertas automáticos.</li>
+            <li><strong>Relatório Automatizado:</strong> Geração de relatório com infográficos, pontos críticos e sugestões de intervenção.</li>
+            <li><strong>Compartilhamento e Ação Comunitária:</strong> Publicação dos relatórios em mural colaborativo, votação e encaminhamento para gestão escolar ou prefeitura.</li>
+          </ol>
+          <h3>Como a proposta soluciona o problema</h3>
+          <ul>
+            <li>Redução da complexidade técnica para os alunos</li>
+            <li>Aprendizado contextualizado e prático</li>
+            <li>Ação imediata com alertas e relatórios semiautomáticos</li>
+          </ul>
+          <h3>Benefícios para os estudantes</h3>
+          <ul>
+            <li>Foco na conscientização e tomada de decisão</li>
+            <li>Desenvolvimento de habilidades analíticas e comunicativas</li>
+            <li>Engajamento social e cidadania</li>
+            <li>Imersão em tecnologias de dados e IoT</li>
+            <li>Feedback em tempo real reforçando o aprendizado</li>
+          </ul>
+        </section>
+      </main>
+
+      <aside aria-label="Destaques e ideias selecionadas">
+        <h3>Destaques e Ideias Selecionadas</h3>
+        <div class="idea-card" tabindex="0" role="article" aria-labelledby="idea1-title" aria-describedby="idea1-desc">
+          <h4 id="idea1-title">Diário Digital do Clima</h4>
+          <p id="idea1-desc">Monitoramento diário do clima local para conectar dados científicos com experiências dos estudantes.</p>
+        </div>
+        <div class="idea-card" tabindex="0" role="article" aria-labelledby="idea2-title" aria-describedby="idea2-desc">
+          <h4 id="idea2-title">Podcast Comunitário</h4>
+          <p id="idea2-desc">Produção de podcasts com entrevistas para amplificar percepções locais sobre mudanças climáticas.</p>
+        </div>
+        <div class="idea-card" tabindex="0" role="article" aria-labelledby="idea3-title" aria-describedby="idea3-desc">
+          <h4 id="idea3-title">Mapa Colaborativo</h4>
+          <p id="idea3-desc">Mapeamento participativo dos problemas ambientais para promover soluções locais.</p>
+        </div>
+        <div class="idea-card" tabindex="0" role="article" aria-labelledby="idea4-title" aria-describedby="idea4-desc">
+          <h4 id="idea4-title">Rede Social Verde</h4>
+          <p id="idea4-desc">Engajamento contínuo por meio de redes sociais ou murais físicos para compartilhar ações e ideias.</p>
+        </div>
+        <div class="idea-card" tabindex="0" role="article" aria-labelledby="idea5-title" aria-describedby="idea5-desc">
+          <h4 id="idea5-title">BioMap Saúde</h4>
+          <p id="idea5-desc">Plataforma integrada que conecta dados ambientais e saúde para ações baseadas em evidências locais.</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Feito por Mariana Barbosa Rioli, RA: 25000716<br>
+      Miguel Fernandes Monteiro, RA: 25014808<br>
+      Clarice Cardoso Corrêa, RA: 25003682<br>
+      Fernanda Gazeta Gibotti, RA: 25000933<br>
+      Vitória Souza Gomes, RA: 25893819<br>
+      João Vitor Ferreira de Camargo, RA: 25001219<br>
+      Maria Simões Mendonça, RA: 25002753<br>
+      Giovanna Maria Câmara Faria, RA: 25018289<br><br>
+      &copy; 2025 EduSens + BioMap | Tecnologia e Educação Ambiental
+    </footer>
+  </div>
+
+  <script>
+    // Navegação por botões no menu
+    const navButtons = document.querySelectorAll('nav button');
+    const sections = document.querySelectorAll('main section');
+
+    navButtons.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        // Atualiza botões
+        navButtons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-current', 'false');
+          b.setAttribute('tabindex', '-1');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-current', 'page');
+        btn.setAttribute('tabindex', '0');
+
+        // Atualiza seções
+        sections.forEach(s => s.hidden = true);
+        sections[i].hidden = false;
+        sections[i].focus();
+      });
+    });
+
+    // Inicializa mostrando só a primeira seção
+    sections.forEach((s, i) => { if(i !== 0) s.hidden = true; });
+
+    // Navegação por teclado nas tabs
+    document.querySelector('nav').addEventListener('keydown', e => {
+      const active = document.activeElement;
+      if (!active.matches('nav button')) return;
+      let index = Array.from(navButtons).indexOf(active);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        let next = (index + 1) % navButtons.length;
+        navButtons[next].focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        let prev = (index - 1 + navButtons.length) % navButtons.length;
+        navButtons[prev].focus();
+      }
+    });
+  </script>
+
+</body>
+</html>
